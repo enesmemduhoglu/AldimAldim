@@ -1,5 +1,6 @@
-import Login from "./Login";
-import Welcome from "./Welcome";
-import Signup from "./Signup";
+import { LoginScreen } from "./LoginScreen";
+import { SignupScreen } from "./SignupScreen";
+import { HomeScreen } from "./HomeScreen";
+import { ForgotPasswordScreen } from "./ForgotPasswordScreen";
 
-export { Login, Welcome, Signup };
+export { LoginScreen, SignupScreen, HomeScreen, ForgotPasswordScreen };
