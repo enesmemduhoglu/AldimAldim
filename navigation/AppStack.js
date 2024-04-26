@@ -8,7 +8,13 @@ const Stack = createStackNavigator();
 export const AppStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen
+        name="İlanlar"
+        component={HomeScreen}
+        options={{
+          headerTitleAlign: "center",
+        }}
+      />
     </Stack.Navigator>
   );
 };
