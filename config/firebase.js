@@ -1,10 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
-// add firebase config
 const firebaseConfig = {
   apiKey: Constants.expoConfig?.extra?.apiKey,
   authDomain: Constants.expoConfig?.extra?.authDomain,
@@ -14,15 +14,35 @@ const firebaseConfig = {
   appId: Constants.expoConfig?.extra?.appId,
 };
 
-// initialize firebase
 const app = initializeApp(firebaseConfig);
 
-// initialize auth; only for native platforms (Android and iOS)
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-// initialize Firestore
 const db = getFirestore(app);
 
-export { auth, db };
+const ilanRef = collection(db, "ilanlar");
+
+const useilanlarListener = () => {
+  const [ilanlar, setilanlar] = useState([]);
+
+  useEffect(() => {
+    return onSnapshot(ilanRef, (snapshot) => {
+      setilanlar(
+        snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const createdAt = data.createdAt ? data.createdAt.toDate() : null;
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: createdAt,
+          };
+        })
+      );
+    });
+  }, []);
+  return ilanlar;
+};
+
+export { auth, db, useilanlarListener };
