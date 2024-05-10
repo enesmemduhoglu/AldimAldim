@@ -7,23 +7,13 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { signOut } from "firebase/auth";
+
 import { useilanlarListener } from "../config/firebase";
-import { auth } from "../config";
 
 export const HomeScreen = () => {
   const ilanlar = useilanlarListener();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      console.log("Çıkış işlemi başarılı.");
-    } catch (error) {
-      console.error("Çıkış işleminde hata oluştu: ", error);
-    }
-  };
 
   // Veri kümesini belirli bir sayfa numarasına ve sayfa boyutuna göre filtreleyen fonksiyon
   const paginate = (array, page_size, page_number) => {
@@ -38,11 +28,9 @@ export const HomeScreen = () => {
       <ScrollView contentContainerStyle={styles.adsContainer}>
         {currentItems.map((ilan, index) => (
           <View key={index} style={styles.adContainer}>
-            <Image
-              source={require("../assets/ev1.jpg")}
-              style={styles.adImage}
-            />
-            <Text style={styles.adInfo}>Oda Sayısı: {ilan.roomCount}</Text>
+            <Image source={{ uri: ilan.img }} style={styles.adImage} />
+            <Text style={styles.adInfo}>Banyo: {ilan.bath}</Text>
+            <Text style={styles.adInfo}>Yatak: {ilan.bed}</Text>
             <Text style={styles.adInfo}>Ev Fiyatı: {ilan.price} TL</Text>
             <Text style={styles.adInfo}>Şehir: {ilan.city}</Text>
           </View>
@@ -61,9 +49,6 @@ export const HomeScreen = () => {
             <Text style={styles.paginationText}>Sonraki Sayfa</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.signOutButton} onPress={handleLogout}>
-          <Text style={styles.signOutText}>Çıkış Yap</Text>
-        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -108,19 +93,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   paginationText: {
-    color: "white",
-    fontSize: 16,
-  },
-  signOutButton: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#007AFF",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-  signOutText: {
     color: "white",
     fontSize: 16,
   },
