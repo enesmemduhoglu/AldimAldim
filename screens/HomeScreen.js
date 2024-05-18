@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -7,48 +7,107 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-
+import { useNavigation } from "@react-navigation/native";
 import { useilanlarListener } from "../config/firebase";
 
 export const HomeScreen = () => {
   const ilanlar = useilanlarListener();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const scrollViewRef = useRef(null);
 
-  // Veri kümesini belirli bir sayfa numarasına ve sayfa boyutuna göre filtreleyen fonksiyon
+  const navigation = useNavigation();
+
   const paginate = (array, page_size, page_number) => {
     return array.slice((page_number - 1) * page_size, page_number * page_size);
   };
 
-  // Geçerli sayfadaki ilanları al
   const currentItems = paginate(ilanlar, itemsPerPage, currentPage);
+
+  const renderPageNumbers = () => {
+    let pages = [];
+    const visiblePages = 3;
+    const totalPages = Math.ceil(ilanlar.length / itemsPerPage);
+
+    let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <TouchableOpacity
+          key={i}
+          style={[
+            styles.paginationButton,
+            currentPage === i && styles.activePageButton,
+          ]}
+          onPress={() => setCurrentPage(i)}
+        >
+          <Text
+            style={[
+              styles.paginationText,
+              currentPage === i && styles.activePageText,
+            ]}
+          >
+            {i}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push(
+          <TouchableOpacity
+            key={"ellipsis-end"}
+            style={styles.paginationButton}
+            disabled={true}
+          >
+            <Text style={styles.paginationText}>...</Text>
+          </TouchableOpacity>
+        );
+      }
+      pages.push(
+        <TouchableOpacity
+          key={totalPages}
+          style={styles.paginationButton}
+          onPress={() => setCurrentPage(totalPages)}
+        >
+          <Text style={styles.paginationText}>{totalPages}</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    return pages;
+  };
+
+  useEffect(() => {
+    scrollToTop();
+  }, [currentPage]);
+
+  const scrollToTop = () => {
+    scrollViewRef.current.scrollTo({ y: 0, animated: true });
+  };
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.adsContainer}>
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={styles.adsContainer}
+      >
         {currentItems.map((ilan, index) => (
-          <View key={index} style={styles.adContainer}>
+          <TouchableOpacity
+            key={index}
+            style={styles.adContainer}
+            onPress={() => navigation.navigate("DetailScreen", { ilan })}
+          >
             <Image source={{ uri: ilan.img }} style={styles.adImage} />
             <Text style={styles.adInfo}>Banyo: {ilan.bath}</Text>
             <Text style={styles.adInfo}>Yatak: {ilan.bed}</Text>
             <Text style={styles.adInfo}>Ev Fiyatı: {ilan.price} TL</Text>
             <Text style={styles.adInfo}>Şehir: {ilan.city}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
-        <View style={styles.paginationContainer}>
-          <TouchableOpacity
-            style={styles.paginationButton}
-            onPress={() => setCurrentPage(currentPage - 1)}
-          >
-            <Text style={styles.paginationText}>Önceki Sayfa</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.paginationButton}
-            onPress={() => setCurrentPage(currentPage + 1)}
-          >
-            <Text style={styles.paginationText}>Sonraki Sayfa</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={styles.paginationContainer}>{renderPageNumbers()}</View>
       </ScrollView>
     </View>
   );
@@ -82,18 +141,30 @@ const styles = StyleSheet.create({
   },
   paginationContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    marginVertical: 20,
+    flexWrap: "wrap",
   },
   paginationButton: {
-    backgroundColor: "#007AFF",
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    margin: 5,
+    borderWidth: 1,
+    borderColor: "black",
   },
   paginationText: {
-    color: "white",
     fontSize: 16,
+  },
+  activePageButton: {
+    backgroundColor: "tomato",
+  },
+  activePageText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  inactivePageButton: {
+    backgroundColor: "#007AFF",
   },
 });
