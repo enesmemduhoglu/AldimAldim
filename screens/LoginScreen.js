@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Text, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useNavigation } from "@react-navigation/native";
 
 import { View, TextInput, Logo, Button, FormErrorMessage } from "../components";
 import { Images, Colors, auth } from "../config";
@@ -14,10 +15,13 @@ export const LoginScreen = ({ navigation }) => {
   const { passwordVisibility, handlePasswordVisibility, rightIcon } =
     useTogglePasswordVisibility();
 
+  const passwordInputRef = useRef(null);
+
   const handleLogin = async (values) => {
     const { email, password } = values;
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      navigation.navigate("Home");
     } catch (error) {
       setErrorState(error.message);
     }
@@ -27,16 +31,12 @@ export const LoginScreen = ({ navigation }) => {
     <>
       <View isSafe style={styles.container}>
         <KeyboardAwareScrollView enableOnAndroid={true}>
-          {/* LogoContainer: consist app logo and screen title */}
           <View style={styles.logoContainer}>
             <Logo uri={Images.logo} />
             <Text style={styles.screenTitle}>Hoşgeldin</Text>
           </View>
           <Formik
-            initialValues={{
-              email: "",
-              password: "",
-            }}
+            initialValues={{ email: "", password: "" }}
             validationSchema={loginValidationSchema}
             onSubmit={(values) => handleLogin(values)}
           >
@@ -49,7 +49,6 @@ export const LoginScreen = ({ navigation }) => {
               handleBlur,
             }) => (
               <>
-                {/* Input alanları */}
                 <TextInput
                   name="email"
                   leftIconName="email"
@@ -61,6 +60,8 @@ export const LoginScreen = ({ navigation }) => {
                   value={values.email}
                   onChangeText={handleChange("email")}
                   onBlur={handleBlur("email")}
+                  returnKeyType="next"
+                  onSubmitEditing={() => passwordInputRef.current.focus()}
                 />
                 <FormErrorMessage
                   error={errors.email}
@@ -79,23 +80,23 @@ export const LoginScreen = ({ navigation }) => {
                   value={values.password}
                   onChangeText={handleChange("password")}
                   onBlur={handleBlur("password")}
+                  returnKeyType="done"
+                  ref={passwordInputRef}
+                  onSubmitEditing={handleSubmit}
                 />
                 <FormErrorMessage
                   error={errors.password}
                   visible={touched.password}
                 />
-                {/* Ekran hata mesajlarını göster */}
                 {errorState !== "" ? (
                   <FormErrorMessage error={errorState} visible={true} />
                 ) : null}
-                {/* Giriş butonu */}
                 <Button style={styles.button} onPress={handleSubmit}>
                   <Text style={styles.buttonText}>Giriş</Text>
                 </Button>
               </>
             )}
           </Formik>
-          {/* Yeni bir hesap oluşturmak için SignupScreen'e yönlendirme butonu */}
           <Button
             style={styles.borderlessButtonContainer}
             borderless
@@ -111,7 +112,6 @@ export const LoginScreen = ({ navigation }) => {
         </KeyboardAwareScrollView>
       </View>
 
-      {/* Uygulama bilgi altbilgisi */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>Hayalinizdeki Ev</Text>
       </View>

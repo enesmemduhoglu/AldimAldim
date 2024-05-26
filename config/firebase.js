@@ -1,6 +1,16 @@
 import { initializeApp } from "firebase/app";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
-import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  doc,
+  onSnapshot,
+  deleteDoc,
+  addDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
@@ -45,4 +55,30 @@ const useilanlarListener = () => {
   return ilanlar;
 };
 
-export { auth, db, useilanlarListener };
+const deleteIlan = async (id) => {
+  await deleteDoc(doc(db, "ilanlar", id));
+};
+
+const addIlan = (bath, bed, city, img, price, state, userId) => {
+  return addDoc(ilanRef, {
+    bath,
+    bed,
+    city,
+    img,
+    price,
+    state,
+    userId,
+    createdAt: new Date(),
+  });
+};
+
+const getUserIlanlar = async (userId) => {
+  const q = query(ilanRef, where("userId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
+
+export { auth, db, useilanlarListener, deleteIlan, addIlan, getUserIlanlar };

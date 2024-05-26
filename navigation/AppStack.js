@@ -3,9 +3,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
-import { HomeScreen } from "../screens";
-import DetailScreen from "../screens/DetailScreen"; // DetailScreen'i içe aktar
+import HomeScreen from "../screens/HomeScreen";
+import DetailScreen from "../screens/DetailScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
+import AddListingScreen from "../screens/AddListingScreen";
+import MyListingsScreen from "../screens/MyListingsScreen";
+import ProfileDetailScreen from "../screens/ProfileDetailScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -18,13 +21,43 @@ const HomeStack = () => {
         component={HomeScreen}
         options={{
           headerShown: false,
-          headerTitleAlign: "center", // Home başlığını ortala
+          headerTitleAlign: "center",
         }}
       />
       <Stack.Screen
         name="DetailScreen"
         component={DetailScreen}
-        options={{ headerShown: false }} // DetailScreen için üstbilgiyi gizle
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const ProfileStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="AddListing"
+        component={AddListingScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MyListings"
+        component={MyListingsScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ProfileDetailScreen"
+        component={ProfileDetailScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
@@ -54,15 +87,15 @@ export const AppStack = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeStack} // HomeScreen yerine HomeStack kullan
+        component={HomeStack}
         options={{
           tabBarLabel: "Home",
-          headerTitleAlign: "center", // Home başlığını ortala
+          headerTitleAlign: "center",
         }}
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStack}
         options={{ tabBarLabel: "Profile", headerTitleAlign: "center" }}
       />
     </Tab.Navigator>

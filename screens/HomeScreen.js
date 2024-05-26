@@ -10,7 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useilanlarListener } from "../config/firebase";
 
-export const HomeScreen = () => {
+const HomeScreen = () => {
   const ilanlar = useilanlarListener();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -168,3 +168,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#007AFF",
   },
 });
+
+export default HomeScreen;

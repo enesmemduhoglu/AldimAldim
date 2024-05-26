@@ -1,10 +1,12 @@
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { auth } from "../config";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { auth } from "../config/firebase";
 import { signOut } from "firebase/auth";
-import { StyleSheet } from "react-native-web";
+import { useNavigation } from "@react-navigation/native";
 
 export const ProfileScreen = () => {
+  const navigation = useNavigation();
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -14,10 +16,24 @@ export const ProfileScreen = () => {
     }
   };
 
+  const handleAddListing = () => {
+    navigation.navigate("AddListing");
+  };
+
+  const handleMyListings = () => {
+    navigation.navigate("MyListings");
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Çıkış Yap</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleAddListing}>
+        <Text style={styles.buttonText}>İlan Ekle</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleMyListings}>
+        <Text style={styles.buttonText}>İlanlarım</Text>
       </TouchableOpacity>
     </View>
   );
@@ -34,6 +50,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginVertical: 10,
   },
   buttonText: {
     color: "white",
