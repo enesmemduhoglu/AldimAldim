@@ -3,25 +3,26 @@ import { Text, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useNavigation } from "@react-navigation/native";
-
 import { View, TextInput, Logo, Button, FormErrorMessage } from "../components";
 import { Images, Colors, auth } from "../config";
 import { useTogglePasswordVisibility } from "../hooks";
 import { loginValidationSchema } from "../utils";
+import { useNavigation } from "@react-navigation/native";
 
-export const LoginScreen = ({ navigation }) => {
+export const LoginScreen = () => {
   const [errorState, setErrorState] = useState("");
   const { passwordVisibility, handlePasswordVisibility, rightIcon } =
     useTogglePasswordVisibility();
 
   const passwordInputRef = useRef(null);
 
+  const navigation = useNavigation();
+
   const handleLogin = async (values) => {
     const { email, password } = values;
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Home");
+      navigation.navigate("HomeScreen");
     } catch (error) {
       setErrorState(error.message);
     }

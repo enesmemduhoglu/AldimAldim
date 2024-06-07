@@ -2,7 +2,6 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-
 import HomeScreen from "../screens/HomeScreen";
 import DetailScreen from "../screens/DetailScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";

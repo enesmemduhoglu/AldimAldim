@@ -27,7 +27,7 @@ const ProfileDetailScreen = ({ route }) => {
           text: "Sil",
           onPress: async () => {
             await deleteIlan(ilan.id);
-            navigation.goBack();
+            navigation.navigate("ProfileScreen");
           },
           style: "destructive",
         },

@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { addIlan, auth } from "../config/firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const AddListingScreen = () => {
   const [bath, setBath] = useState("");
@@ -24,12 +25,19 @@ const AddListingScreen = () => {
   const priceInputRef = useRef(null);
   const stateInputRef = useRef(null);
 
+  const navigation = useNavigation(); // Add this line
+
   const handleAddListing = async () => {
     try {
       const user = auth.currentUser;
       await addIlan(bath, bed, city, img, price, state, user.uid);
       console.log("İlan Eklendi");
-      Alert.alert("Başarılı", "İlan ekleme işlemi başarılı!");
+      Alert.alert("Başarılı", "İlan ekleme işlemi başarılı!", [
+        {
+          text: "Tamam",
+          onPress: () => navigation.navigate("ProfileScreen"), // Navigate to ProfileScreen
+        },
+      ]);
     } catch (error) {
       console.error("İlan eklenirken hata oluştu: ", error);
       Alert.alert("Hata", "İlan eklenirken bir hata oluştu.");
