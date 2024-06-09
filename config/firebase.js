@@ -4,12 +4,12 @@ import {
   getFirestore,
   collection,
   doc,
-  onSnapshot,
-  deleteDoc,
   addDoc,
   query,
   where,
   getDocs,
+  deleteDoc,
+  onSnapshot, // Burada onSnapshot'ı ekleyin
 } from "firebase/firestore";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -33,6 +33,7 @@ const auth = initializeAuth(app, {
 const db = getFirestore(app);
 
 const ilanRef = collection(db, "ilanlar");
+const favoritesRef = collection(db, "favorites");
 
 const useilanlarListener = () => {
   const [ilanlar, setilanlar] = useState([]);
@@ -81,4 +82,45 @@ const getUserIlanlar = async (userId) => {
   }));
 };
 
-export { auth, db, useilanlarListener, deleteIlan, addIlan, getUserIlanlar };
+// Favori ilanları eklemek için fonksiyon
+const addFavorite = async (ilan) => {
+  const user = auth.currentUser;
+  if (user) {
+    await addDoc(favoritesRef, {
+      ...ilan,
+      userId: user.uid,
+      createdAt: new Date(),
+    });
+  }
+};
+
+// Favori ilanları almak için fonksiyon
+const getFavorites = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    const q = query(favoritesRef, where("userId", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  }
+  return [];
+};
+
+const deleteFavorite = async (id) => {
+  const favoriteDoc = doc(db, "favorites", id);
+  await deleteDoc(favoriteDoc);
+};
+
+export {
+  auth,
+  db,
+  useilanlarListener,
+  deleteIlan,
+  addIlan,
+  getUserIlanlar,
+  addFavorite,
+  getFavorites,
+  deleteFavorite,
+};

@@ -5,6 +5,7 @@ import {
   ScrollView,
   Image,
   Text,
+  TextInput,
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -12,6 +13,7 @@ import { useilanlarListener } from "../config/firebase";
 
 const HomeScreen = () => {
   const ilanlar = useilanlarListener();
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const scrollViewRef = useRef(null);
@@ -22,12 +24,16 @@ const HomeScreen = () => {
     return array.slice((page_number - 1) * page_size, page_number * page_size);
   };
 
-  const currentItems = paginate(ilanlar, itemsPerPage, currentPage);
+  const filteredIlanlar = ilanlar.filter((ilan) =>
+    ilan.city.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const currentItems = paginate(filteredIlanlar, itemsPerPage, currentPage);
 
   const renderPageNumbers = () => {
     let pages = [];
     const visiblePages = 3;
-    const totalPages = Math.ceil(ilanlar.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredIlanlar.length / itemsPerPage);
 
     let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
     let endPage = Math.min(totalPages, startPage + visiblePages - 1);
@@ -90,6 +96,12 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Şehir ismi ile arayın"
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={styles.adsContainer}
@@ -116,6 +128,13 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  searchInput: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    margin: 16,
   },
   adsContainer: {
     flexGrow: 1,

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,6 +7,8 @@ import DetailScreen from "../screens/DetailScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
 import AddListingScreen from "../screens/AddListingScreen";
 import MyListingsScreen from "../screens/MyListingsScreen";
+import FavoritesScreen from "../screens/FavoritesScreen";
+import FavoritesDetailScreen from "../screens/FavoritesDetailScreen";
 import ProfileDetailScreen from "../screens/ProfileDetailScreen";
 
 const Tab = createBottomTabNavigator();
@@ -51,6 +53,16 @@ const ProfileStack = () => {
       <Stack.Screen
         name="MyListings"
         component={MyListingsScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Favorites"
+        component={FavoritesScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="FavoritesDetailScreen"
+        component={FavoritesDetailScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

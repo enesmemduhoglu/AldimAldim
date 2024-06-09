@@ -24,6 +24,10 @@ export const ProfileScreen = () => {
     navigation.navigate("MyListings");
   };
 
+  const handleFavorites = () => {
+    navigation.navigate("Favorites");
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
@@ -34,6 +38,9 @@ export const ProfileScreen = () => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleMyListings}>
         <Text style={styles.buttonText}>İlanlarım</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleFavorites}>
+        <Text style={styles.buttonText}>Favorilerim</Text>
       </TouchableOpacity>
     </View>
   );
